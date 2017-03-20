@@ -22,8 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)webViewDidFinishLoad:(MRWebView *)webView;
 - (void)webView:(MRWebView *)webView didFailLoadWithError:(nonnull NSError *)error;
 - (BOOL)webView:(MRWebView *)webView shouldStartLoadWithRequest:(nonnull NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
-
+- (void)webView:(MRWebView *)webView updateProgress:(CGFloat)progress;
 @end
+
 @interface MRWebView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame usingUIWebView:(BOOL)usingUIWebView;

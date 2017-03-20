@@ -119,6 +119,7 @@
     
     if ([keyPath isEqualToString:@"estimatedProgress"]) {
         self.estimatedProgress = [change[NSKeyValueChangeNewKey] doubleValue];
+        [self callbackWebViewUpdateProgress:[change[NSKeyValueChangeNewKey] doubleValue]];
     }
     else if ([keyPath isEqualToString:@"title"]) {
         self.title = change[NSKeyValueChangeNewKey];
@@ -199,6 +200,7 @@
 - (void)webViewProgress:(MRWebViewProgress *)webViewProgress updateProgress:(CGFloat)progress {
     
     self.estimatedProgress = progress;
+    [self callbackWebViewUpdateProgress:progress];
 }
 
 #pragma mark - 
@@ -206,6 +208,7 @@
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
     
+    NSLog(@"webView: %@ navigationAction: %@", webView, navigationAction);
     BOOL resultBOOL = [self callbackWebViewShouldStartLoadWithRequest:navigationAction.request navigationType:navigationAction.navigationType];
     BOOL isLoadingDisableScheme = [self isLoadingWKWebViewDisableScheme:navigationAction.request.URL];
     
@@ -276,13 +279,19 @@
     return resultBOOL;
 }
 
-#pragma mark - 
+- (void)callbackWebViewUpdateProgress:(CGFloat)progress {
+    
+    if ([self.delegate respondsToSelector:@selector(webView:updateProgress:)]) {
+        [self.delegate webView:self updateProgress:progress];
+    }
+}
+#pragma mark -
 
 - (BOOL)isLoadingWKWebViewDisableScheme:(NSURL *)url {
     
     BOOL retValue = NO;
     
-    if ([url.scheme isEqualToString:@"tel"] || [url.host isEqualToString:@"itunes.apple.com"]) {
+    if ([url.scheme isEqualToString:@"tel"] || [url.host isEqualToString:@"itunes.apple.com"] ) {
         UIApplication* app = [UIApplication sharedApplication];
         
         if ([app canOpenURL:url]) {

@@ -9,8 +9,9 @@
 #import "ViewController.h"
 #import "MRWebView.h"
 
-@interface ViewController ()
-@property (strong, nonatomic) MRWebView *webView;
+@interface ViewController () <MRWebViewDelegate>
+@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+@property (weak, nonatomic) IBOutlet MRWebView *webView;
 @end
 
 @implementation ViewController
@@ -18,8 +19,8 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    self.webView = [[MRWebView alloc] initWithFrame:self.view.bounds];
-    [self.view addSubview:_webView];
+//    self.webView = [[MRWebView alloc] initWithFrame:self.view.bounds];
+//    [self.view addSubview:_webView];
     if (_webView.usingUIWebView) {
         self.title = @"UIWebView";
     }
@@ -27,6 +28,7 @@
         self.title = @"MKWebView";
     }
     [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://loopslive.com/?userId=191236&token=4e4b93a301415a53cd9af911bb53d38f&lang=en&sig=37077857f976e9680679b843c56ac673"]]];
+    _webView.delegate = self;
 }
 
 
@@ -35,5 +37,34 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)webViewDidStartLoad:(MRWebView *)webView {
+    
+    self.progressView.progress = 0;
+    NSLog(@"%@", webView);
+}
+
+- (void)webViewDidFinishLoad:(MRWebView *)webView {
+    
+    self.progressView.progress = 0;
+    NSLog(@"%@", webView);
+}
+
+- (void)webView:(MRWebView *)webView didFailLoadWithError:(NSError *)error {
+    
+    self.progressView.progress = 0;
+    NSLog(@"%@", webView);
+}
+
+- (BOOL)webView:(MRWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    
+    self.progressView.hidden = NO;
+    return YES;
+}
+
+- (void)webView:(MRWebView *)webView updateProgress:(CGFloat)progress {
+    
+    NSLog(@"%@", @(progress));
+    self.progressView.progress = progress;
+}
 
 @end
