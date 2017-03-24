@@ -19,8 +19,6 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-//    self.webView = [[MRWebView alloc] initWithFrame:self.view.bounds];
-//    [self.view addSubview:_webView];
     if (_webView.usingUIWebView) {
         self.title = @"UIWebView";
     }
@@ -40,30 +38,29 @@
 - (void)webViewDidStartLoad:(MRWebView *)webView {
     
     self.progressView.progress = 0;
-    NSLog(@"%@", webView);
 }
 
 - (void)webViewDidFinishLoad:(MRWebView *)webView {
     
     self.progressView.progress = 0;
-    NSLog(@"%@", webView);
 }
 
 - (void)webView:(MRWebView *)webView didFailLoadWithError:(NSError *)error {
     
     self.progressView.progress = 0;
-    NSLog(@"%@", webView);
 }
 
 - (BOOL)webView:(MRWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     
+    if (navigationType == UIWebViewNavigationTypeLinkClicked) {
+        NSLog(@"webView:%@ request:%@ navigationType: %ld", webView, request, (long)navigationType);
+    }
     self.progressView.hidden = NO;
     return YES;
 }
 
 - (void)webView:(MRWebView *)webView updateProgress:(CGFloat)progress {
     
-    NSLog(@"%@", @(progress));
     self.progressView.progress = progress;
 }
 
