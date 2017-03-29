@@ -112,6 +112,7 @@
     
     [webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
     [webView addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:nil];
+    webView.allowsBackForwardNavigationGestures = true;
     _realWebView = webView;
 }
 
@@ -211,8 +212,11 @@
     BOOL resultBOOL = [self callbackWebViewShouldStartLoadWithRequest:navigationAction.request navigationType:navigationAction.navigationType];
     BOOL isLoadingDisableScheme = [self isLoadingWKWebViewDisableScheme:navigationAction.request.URL];
     
+    NSLog(@"history: %ld", (long)[self countOfHistory]);
+    
     if (resultBOOL && !isLoadingDisableScheme) {
         self.currentRequest = navigationAction.request;
+        
         if (navigationAction.targetFrame == nil) {
             [webView loadRequest:navigationAction.request];
         }
@@ -230,16 +234,22 @@
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
     
+    NSLog(@"webViewDidFinishLoad canGoForward %@", webView.canGoForward ? @"YES": @"NO");
+    NSLog(@"webViewDidFinishLoad canGoBack %@", webView.canGoBack ? @"YES": @"NO");
+    NSLog(@"history: %ld", (long)[self countOfHistory]);
     [self callbackWebViewDidFinishLoad];
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     
+    NSLog(@"history: %ld", (long)[self countOfHistory]);
+
     [self callbackWebViewDidFailLoadWithError:error];
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     
+    NSLog(@"history: %ld", (long)[self countOfHistory]);
     [self callbackWebViewDidFailLoadWithError:error];
 }
 
